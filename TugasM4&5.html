@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Pemesanan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f9fc;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .container h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="checkbox"] {
+            width: auto;
+        }
+        button {
+            margin-top: 10px;
+        }
+        .btn {
+            width: 32%;
+            padding: 10px;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-calculate {
+            background-color: #007bff;
+        }
+        .btn-save {
+            background-color: #28a745;
+        }
+        .btn-cancel {
+            background-color: #ffc107;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        #totalBayar {
+            font-weight: bold;
+            color: #333;
+            background-color: #f8f9fa;
+            pointer-events: none;
+        }
+    </style>
+    <script>
+        function hitungTotal() {
+            const tipeKamar = document.getElementById("tipeKamar").value;
+            const durasi = parseInt(document.getElementById("durasi").value);
+            const termasukBreakfast = document.getElementById("breakfast").checked;
+
+            // Harga dasar per tipe kamar
+            let hargaPerMalam = 0;
+            if (tipeKamar === "Standar") hargaPerMalam = 500000;
+            else if (tipeKamar === "Deluxe") hargaPerMalam = 1000000;
+            else if (tipeKamar === "Suite") hargaPerMalam = 1500000;
+
+            // Tambahan untuk breakfast
+            const biayaBreakfast = termasukBreakfast ? 50000 : 0;
+
+            // Diskon
+            let diskon = durasi >= 3 ? 0.1 : 0; // Diskon 10% jika menginap >= 3 malam
+
+            // Total biaya
+            const totalSebelumDiskon = (hargaPerMalam + biayaBreakfast) * durasi;
+            const totalDiskon = totalSebelumDiskon * diskon;
+            const totalBayar = totalSebelumDiskon - totalDiskon;
+
+            // Menampilkan hasil
+            document.getElementById("totalBayar").value = `Rp ${totalBayar.toLocaleString("id-ID")}`;
+            return { totalBayar, diskon: diskon * 100 };
+        }
+
+        function tampilkanResume() {
+            const idPemesanan = document.getElementById("idPemesanan").value;
+            const nama = document.getElementById("namaPemesan").value;
+            const identitas = document.getElementById("nomorIdentitas").value;
+            const jenisKelamin = document.getElementById("jenisKelamin").value;
+            const tipeKamar = document.getElementById("tipeKamar").value;
+            const durasi = document.getElementById("durasi").value;
+            const termasukBreakfast = document.getElementById("breakfast").checked ? "Ya" : "Tidak";
+            const { totalBayar, diskon } = hitungTotal();
+
+            // Membuat string untuk resume
+            const resume = `
+Resume Pemesanan:
+ID Pemesanan: ${idPemesanan}
+Nama Pemesan: ${nama}
+Nomor Identitas: ${identitas}
+Jenis Kelamin: ${jenisKelamin}
+Tanggal Pesan: ${document.getElementById("tanggalPesan").value}
+Tipe Kamar: ${tipeKamar}
+Durasi Menginap: ${durasi} hari
+Termasuk Breakfast: ${termasukBreakfast}
+Diskon: ${diskon}%
+Total Bayar: Rp ${totalBayar.toLocaleString("id-ID")}
+            `;
+            alert(resume); // Menampilkan resume menggunakan alert
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Form Pemesanan</h1>
+        <form onsubmit="event.preventDefault(); tampilkanResume();">
+            <div class="form-group">
+                <label for="idPemesanan">ID Pemesanan:</label>
+                <input type="text" id="idPemesanan" value="12" readonly>
+            </div>
+            <div class="form-group">
+                <label for="namaPemesan">Nama Pemesan:</label>
+                <input type="text" id="namaPemesan" placeholder="Masukkan nama pemesan" required>
+            </div>
+            <div class="form-group">
+                <label for="jenisKelamin">Jenis Kelamin:</label>
+                <select id="jenisKelamin" required>
+                    <option value="Laki-Laki">Laki-Laki</option>
+                    <option value="Perempuan">Perempuan</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="nomorIdentitas">Nomor Identitas:</label>
+                <input type="text" id="nomorIdentitas" placeholder="Masukkan nomor identitas" required>
+            </div>
+            <div class="form-group">
+                <label for="tanggalPesan">Tanggal Pesan:</label>
+                <input type="date" id="tanggalPesan" required>
+            </div>
+            <div class="form-group">
+                <label for="tipeKamar">Tipe Kamar:</label>
+                <select id="tipeKamar" required>
+                    <option value="Standar">Standar - Rp 500,000/malam</option>
+                    <option value="Deluxe">Deluxe - Rp 1,000,000/malam</option>
+                    <option value="Suite">Suite - Rp 1,500,000/malam</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="durasi">Durasi Menginap (hari):</label>
+                <input type="number" id="durasi" placeholder="Masukkan durasi menginap" min="1" required>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="breakfast"> Termasuk Breakfast
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="totalBayar">Total Bayar:</label>
+                <input type="text" id="totalBayar" value="Rp 0" readonly>
+            </div>
+            <div class="form-group" style="display: flex; justify-content: space-between;">
+                <button type="button" class="btn btn-calculate" onclick="hitungTotal()">Hitung Total Bayar</button>
+                <button type="submit" class="btn btn-save">Simpan</button>
+                <button type="reset" class="btn btn-cancel">Batal</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
